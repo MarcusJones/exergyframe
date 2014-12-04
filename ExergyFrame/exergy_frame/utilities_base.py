@@ -4,40 +4,29 @@
 # Standard:
 from __future__ import division
 from __future__ import print_function
+import logging
+import time
+import re 
+import datetime
 
-from config import *
-
-import logging.config
-import unittest
-
-
-#===============================================================================
-# Logging
-#===============================================================================
-logging.config.fileConfig(ABSOLUTE_LOGGING_PATH)
-myLogger = logging.getLogger()
-myLogger.setLevel("DEBUG")
-
-
+# External 
+import pandas as pd
+import numpy as np 
+import scipy.io as sio
 
 #----- Input and output
-def display(df):
-    pd.set_option('display.width', 5000)
+def create_frame(header_labels, headers, data):
+    m_index = pd.MultiIndex.from_tuples(headers, names = header_labels)
+    df = pd.DataFrame(data, columns=m_index)
+    return df
+
+def display_wide(df):
+    pd.set_option('display_wide.width', 5000)
     print(df)
-
-def read_excel(path):
-    raise
-    writer = pd.ExcelWriter(path)
-    for n, df in enumerate(list_frames):
-        df.to_excel(writer, sheet_name='sheet{}'.format(n),merge_cells = merge_cells)
-        writer.save()
-        logging.debug("Wrote {} to {}, Sheet {}".format(df, path, sheet_name))
-
-def read_pickle(path):
-    return pd.read_pickle(path)
 
 def write_dict_to_excel(df_dict,path, merge_cells = True):
     """ Writes a name - df dictionary to an excel workbook
+    Each name is a seperate sheet
     """
 
     writer = pd.ExcelWriter(path, engine='xlsxwriter')
@@ -197,7 +186,7 @@ def sum_rows(df,units_row_label = None, column_title = None):
     if units_row_label:
         units_row = df.columns.get_level_values(units_row_label)
 
-        assert(util_gen.checkEqual(units_row)), "Inconsistent units {}".format(set(units_row))
+        assert(check_equal(units_row)), "Inconsistent units {}".format(set(units_row))
         units = list(set(units_row))[0]
         units_position = df.columns.names.index(units_row_label)
         new_column_label[units_position] = units
@@ -233,7 +222,16 @@ def sum_rows(df,units_row_label = None, column_title = None):
     raise
     return df
 
-# ------
+# AAA ------
+
+def check_equal(iterator):
+    try:
+        iterator = iter(iterator)
+        first = next(iterator)
+        return all(first == rest for rest in iterator)
+    except StopIteration:
+        return True
+    
 def rename_index_inplace(df,old,new):
     assert(old in df.index)
     df.rename(index={old : new},inplace=True)
@@ -280,9 +278,6 @@ def reorder_columns(data_frame,head_frame):
     logging.debug("Re-ordered columns in data to match header".format())
 
     return df_unshuffled
-
-
-
 def create_header_frame(df,id_row=None):
     """
     The columns store the id
@@ -297,19 +292,14 @@ def create_header_frame(df,id_row=None):
 #
     return df
 
+# Old --- 
+def read_excel(path):
+    raise
+    writer = pd.ExcelWriter(path)
+    for n, df in enumerate(list_frames):
+        df.to_excel(writer, sheet_name='sheet{}'.format(n),merge_cells = merge_cells)
+        writer.save()
+        logging.debug("Wrote {} to {}, Sheet {}".format(df, path, sheet_name))
 
-
-#===============================================================================
-# Unit testing
-#===============================================================================
-
-class DesignSpaceBasicTests(unittest.TestCase):
-    def setUp(self):
-        #print "**** TEST {} ****".format(whoami())
-        myLogger.setLevel("CRITICAL")
-        print("Setup")
-        myLogger.setLevel("DEBUG")
-
-    def test010_SimpleCreation(self):
-        print("**** TEST {} ****".format(whoami()))
-
+def read_pickle(path):
+    return pd.read_pickle(path)
