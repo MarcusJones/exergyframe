@@ -10,7 +10,7 @@ from __future__ import print_function
 import os
 import unittest
 import random
-
+import xlrd as xlrd
 # Logging
 LOGGING_CONFIG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), r'loggingNofile.conf')
 import logging.config
@@ -64,9 +64,81 @@ class test_frame(unittest.TestCase):
     def test02_creation(self):
         print("**** TEST {} ****".format(get_self()))
         df = xrg.create_frame(self.headerDef, zip(*self.headers), self.data_2d)
+        print("\n-Assembled frame-")
         print(df)
+        print("\n-Describe-")
         print(df.describe())
         print(df.dtypes)
+    
+
+class test_matsave(unittest.TestCase):
+#class testFrame(unittest.TestCase):
+    def setUp(self):
+        print("**** {} ****".format(get_self()))
+        # This is random
+        
+    def test01_load(self):
+        print("**** {} ****".format(get_self()))
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        test_data_dir = os.path.abspath(curr_dir + r"\..\Example data")
+        path_input_data1 = os.path.join(test_data_dir, r'Solar day.xlsx')
+        
+        path_output_excel =  os.path.join(test_data_dir, r'Solar day out.xlsx')
+        print(path_input_data1)
+        #xls = pd.ExcelFile(path_input_data1)
+        book = xlrd.open_workbook(path_input_data1)
+        sh = book.sheet_by_index(0)
+        
+        N_heads = 5
+        
+        data = []
+        for col in range(sh.ncols):
+            values = []
+            for row in range(sh.nrows):
+                values.append(sh.cell(row,col).value)
+            data.append(values)
+
+        labels = data.pop(0)
+        labels = labels[:N_heads]
+        index = data.pop(0)
+        index = index[N_heads:]
+        
+        data = zip(*data)
+        headers = data[:N_heads]
+        headers = zip(*headers)
+        data = data[N_heads:]
+        
+        print(labels)
+        print(index)
+        print(headers)
+        print(data)
+        
+        df = xrg.create_frame(labels, headers, data)
+        print(df)
+        
+        df.to_excel(path_output_excel,merge_cells=True)
+        
+        # Select columns
+        mask_temp = xrg.get_mask(df, 'Type','T')
+        mask_system = xrg.get_mask(df, 'System','Solar')
+        mask_total = mask_temp & mask_system
+        print(df.loc[:,mask_total])
+        
+        # Convert kj/hr to W
+        mask_kjhr = xrg.get_mask(df, 'Units','kj/hr')
+        
+        def convert_kjhr_w(val):
+            return val/3.6
+        
+        #df.loc[:,mask_kjhr] = df.loc[:,mask_kjhr].apply(convert_kjhr_w)
+        #df.app
+        xrg.convert_cols(df,'Units','kj/hr','W',convert_kjhr_w)
+        
+        print(df)
+        
+        
+        #df.to_excel(path_output_excel,engine=r'io.excel.xlsx.writer',merge_cells=False)
+        
         
     def test03_reshuffle(self):
         print("**** TEST {} ****".format(get_self()))
@@ -78,11 +150,6 @@ class test_frame(unittest.TestCase):
         print(df_shuffled)
         print(reorder_columns(df_shuffled,self.header_frame))
 
-class test_matsave(unittest.TestCase):
-#class testFrame(unittest.TestCase):
-    def setUp(self):
-        print("**** {} ****".format(get_self()))
-        # This is random
 
     unittest.skipIf(1,"")
     def test01_print(self):

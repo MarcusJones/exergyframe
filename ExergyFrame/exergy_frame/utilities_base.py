@@ -15,10 +15,70 @@ import numpy as np
 import scipy.io as sio
 
 #----- Input and output
-def create_frame(header_labels, headers, data):
+def create_frame(header_labels, headers, data, index=None):
+    """A simple wrapper for pd.DataFrame instances
+    """
+    pd.set_option('display.multi_sparse', False)
     m_index = pd.MultiIndex.from_tuples(headers, names = header_labels)
-    df = pd.DataFrame(data, columns=m_index)
+    df = pd.DataFrame(data, columns=m_index, index = index)
     return df
+
+def get_mask(frame, label, match_value):
+    """Simple reminder function for selecting columns 
+    On a column based multi-indexed DataFrame
+    return a boolean mask over the columns of the data frame
+    To be used finally as a df.iloc[:,mask]
+    """
+    mask = frame.columns.get_level_values(label) == match_value
+    assert mask.any(), "Label match not found: {} = {}".format(label, match_value)
+    #print(any(mask))
+    #print(mask)
+    #raise
+    return mask
+
+#def select
+
+def convert_cols(df, label, current_unit, new_unit, conversion_function):
+    mask_matched_units = get_mask(df, label, current_unit)
+    df.loc[:,mask_matched_units] = df.loc[:,mask_matched_units].apply(conversion_function)
+    
+    #print("asdfasdf")
+    #print(df.columns.get_level_values(label) == current_unit)
+    
+    #print(dir(df.columns))
+    #print(df.columns.get_values())
+    mindex_rows = df.columns.tolist()
+    mindex_names = df.columns.names
+    
+    #print(mindex_names)
+    
+    selected_label_index = mindex_names.index(label)
+
+    for row in mindex_rows:
+        print(row)
+    
+    #this_row = mindex_rows[mask_matched_units]
+    #[selected_label_index]
+    #print(this_row)
+    
+    #label_match = list()
+#     for this_label in mindex_names: 
+#         if this_label == label:
+#             label_match.append(True)
+#         else:
+#             label_match.append(False)
+#             
+#     print(label_match)
+
+
+    
+    #df.columns.
+    #print(df.columns[mask_matched_units].names)
+    #print(df.columns[mask_matched_units].levels)
+    
+    #current_unit
+    raise
+
 
 def display_wide(df):
     pd.set_option('display_wide.width', 5000)
@@ -160,13 +220,6 @@ def get_mask_regex(frame, label, pattern):
     logging.debug("Masking returned '{}' columns".format(sum(mask)))
     return mask
 
-def get_mask(frame, label, match_value):
-    """On a column based multi-indexed DataFrame
-    return a boolean mask over the columns of the data frame
-    To be used finally as a df.iloc[:,mask]
-    """
-    return frame.columns.get_level_values(label) == match_value
-
 def apply_col_mask(frame, mask):
     return frame.iloc[:,mask]
 
@@ -266,7 +319,7 @@ def drop_missing_cols(df1,df2):
     #print(set1 & set2)
     return(df1,df2)
 
-def reorder_columns(data_frame,head_frame):
+def reorder_columns(data_frame, head_frame):
     #print(set(data_frame.columns))
     #print(set(head_frame.columns))
     #print(set(data_frame.columns)==set(head_frame.columns))
