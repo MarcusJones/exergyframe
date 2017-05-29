@@ -14,7 +14,7 @@ Etc.
 #===============================================================================
 from __future__ import division    
 import logging.config
-from utility_inspect import whoami, whosdaddy
+from utility_inspect import get_self, get_parent
 import unittest
 from config import *
 from utility_excelOLD import ExtendedExcelBookAPI, ExcelBookRead
@@ -114,13 +114,13 @@ class allTests(unittest.TestCase):
     
     @unittest.skip("")
     def SKIPtest010_TrnsysOutDesc(self):
-        print "**** TEST {} ****".format(whoami())
+        print "**** TEST {} ****".format(get_self())
         
         #descFilePath = FREELANCE_DIR + r"\TRNSYSlib\"
         #getDescriptions()
     @unittest.skip("")
     def Skiptest010_TrnsysBalDesc(self):
-        print "**** TEST {} ****".format(whoami())
+        print "**** TEST {} ****".format(get_self())
         
         descFilePath = FREELANCE_DIR + r"\TRNSYSlib\BalanceDescriptions.xls"
         #getDescriptions()
@@ -130,7 +130,7 @@ class allTests(unittest.TestCase):
     
     @unittest.skip("")
     def test010_TrnsysZoneNames(self):
-        print "**** TEST {} ****".format(whoami())
+        print "**** TEST {} ****".format(get_self())
         
         descFilePath = os.getcwd() + r"\..\..\test files\ZoneNames.xlsx"
         
@@ -141,7 +141,7 @@ class allTests(unittest.TestCase):
         print getDescriptionsZoneNames(descFilePath,sheetName)
     
     def test050_getSearchIDX(self):
-        print "**** TEST {} ****".format(whoami())
+        print "**** TEST {} ****".format(get_self())
         
         wbPath = os.getcwd() + r"\..\..\test files\testingAll.xlsx"
         

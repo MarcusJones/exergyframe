@@ -19,7 +19,7 @@
 #===============================================================================
 from __future__ import division    
 import logging.config
-from utility_inspect import whoami, whosdaddy
+from utility_inspect import get_self, get_parent
 import unittest
 from config import *
 
@@ -87,7 +87,7 @@ def getEnthalpyFrames():
 
 class allTests(unittest.TestCase):
     def test010_SimpleCreation(self):
-        print "**** TEST {} ****".format(whoami())
+        print "**** TEST {} ****".format(get_self())
         T = 22 #C
         w = 0.0093 # kg/kg
         mf = 50 # kg/hr
