@@ -24,10 +24,10 @@ import pandas as pd
 
 # Own
 from utility_inspect import get_self, get_parent
-import exergy_frame as xrg
-#import utilities_base as util 
+#import exergy_frame as xrg
+import utilities_base as util_b
 
-class test_frame(unittest.TestCase):
+class test_frame_obselete(unittest.TestCase):
     def setUp(self):
         print("**** {} ****".format(get_self()))
         # This is random
@@ -35,7 +35,7 @@ class test_frame(unittest.TestCase):
         data_2d = list()
 
         for i in range(5):
-            row = [random.randint(0,10) for i in xrange(4)]
+            row = [random.randint(0,10) for i in range(4)]
             data_2d.append(row)
 
         # This is fixed
@@ -61,9 +61,36 @@ class test_frame(unittest.TestCase):
         print("\n-Data-")        
         print(self.data_frame)
 
+        #print(self.data_frame.summary_string)
+
+class test_frame(unittest.TestCase):
+    def setUp(self):
+        print("**** {} ****".format(get_self()))
+        # This is random
+
+        data_2d = list()
+
+        for i in range(5):
+            row = [random.randint(0,10) for i in range(4)]
+            data_2d.append(row)
+
+        # This is fixed
+        self.data_2d = [[1, "Chicken", "A", 6.0], [6, 2, "B", 3], [0, 8, "C", 7.5], [10, 6, "D", 8], [8, 2, "E", 0]]
+
+        self.headerDef = ["Attrib1","Xpos","Ypos"]
+
+        self.headers = [
+                   ["alpha","beta","charlie","delta"],
+                   ["0","2","2","4"],
+                   ["0","1","1","6"],
+                   ]
+        
+        self.data_frame = pd.DataFrame(self.data_2d,)
+        self.header_frame = pd.DataFrame(self.headers, index=self.headerDef)
+
     def test02_creation(self):
         print("**** TEST {} ****".format(get_self()))
-        df = xrg.create_frame(self.headerDef, zip(*self.headers), self.data_2d)
+        df = util_b.create_frame(self.headerDef, zip(*self.headers), self.data_2d)
         print("\n-Assembled frame-")
         print(df)
         print("\n-Describe-")
