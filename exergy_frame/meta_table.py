@@ -29,7 +29,7 @@ import os
 def getDescriptionsOut(descriptionsFilePath):
     # descriptionsFilePath is an excel file with a proper "Descriptions" sheet
     parametersBook = ExcelBookRead(descriptionsFilePath)
-    descriptionsTable = parametersBook.get_table("Descriptions",1,None,0,None)
+    descriptionsTable = parametersBook.get_table_literal("Descriptions",1,None,0,None)
     #print descriptionsTable
     descriptions = list()
     #print descriptionsTable
@@ -55,7 +55,7 @@ def getDescriptionsOut(descriptionsFilePath):
 def getDescriptionsBal(descriptionsFilePath,sheetName):
     # descriptionsFilePath is an excel file with a proper "Descriptions" sheet
     parametersBook = ExtendedExcelBookAPI(descriptionsFilePath)
-    descriptionsTable = parametersBook.get_table(sheetName,1,200,1,4)
+    descriptionsTable = parametersBook.get_table_literal(sheetName,1,200,1,4)
     descriptions = list()
     for row in descriptionsTable[1:]:
         if row[0]:
@@ -76,7 +76,7 @@ def getDescriptionsBal(descriptionsFilePath,sheetName):
 def getDescriptionsZoneNames(descriptionsFilePath,sheetName):
     # descriptionsFilePath is an excel file with a proper "Descriptions" sheet
     parametersBook = ExtendedExcelBookAPI(descriptionsFilePath)
-    descriptionsTable = parametersBook.get_table(sheetName,1,200,1,2)
+    descriptionsTable = parametersBook.get_table_literal(sheetName,1,200,1,2)
     descriptions = list()
     for row in descriptionsTable[1:]:
         if row[0]:
