@@ -1,6 +1,6 @@
 path_bal = r"C:\Users\jon\Desktop\Energy_zone.BAL.txt"
 path_out = r"C:\Users\jon\Desktop\Energy_zone.BAL.csv"
-
+raise Exception("Obselete, SEE util_pandas")
 import csv
 f_out = open(path_out, 'w')
 writer = csv.writer(f_out, delimiter=';')

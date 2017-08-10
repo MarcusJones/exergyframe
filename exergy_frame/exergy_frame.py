@@ -33,8 +33,7 @@ import pandas as pd
 #===============================================================================
 # Code
 #===============================================================================
-raise Exception("Obselete, just use a multi index frame!")
-
+raise Exception("Obselete, SEE util_pandas")
 class ExergyFrame(object):
     """
     

@@ -14,6 +14,8 @@ import pandas as pd
 import numpy as np 
 import scipy.io as sio
 
+raise Exception("Obselete, SEE util_pandas")
+
 #----- Input and output
 def create_frame(header_labels, headers, data, index=None):
     """A simple wrapper for pd.DataFrame instances
